@@ -2,6 +2,7 @@ package rip.deadcode.ratpack.acsrf;
 
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import ratpack.guice.ConfigurableModule;
 
@@ -20,8 +21,8 @@ public final class AntiCsrfModule extends ConfigurableModule<AntiCsrfConfig> {
 
         bind( HashFunction.class ).annotatedWith( Names.named( HASH_FUNCTION_NAME ) ).toInstance( Hashing.sha256() );
 
-        bind( CsrfHandler.class ).to( DefaultCsrfHandler.class );
-        bind( CsrfTokenManager.class ).to( DefaultCsrfTokenManager.class );
+        bind( CsrfHandler.class ).to( DefaultCsrfHandler.class ).in( Singleton.class );
+        bind( CsrfTokenManager.class ).to( DefaultCsrfTokenManager.class ).in( Singleton.class );
     }
 
     public AntiCsrfModule withConfig( AntiCsrfConfig config ) {
