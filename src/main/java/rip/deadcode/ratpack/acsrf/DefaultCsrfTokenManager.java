@@ -12,7 +12,9 @@ import java.util.Objects;
 
 /**
  * A default {@link CsrfTokenManager} implementation.
- * Generates a token based on session id.
+ *
+ * <p>
+ * Generates a token which is a SHA-256 hash of the session id.
  */
 public final class DefaultCsrfTokenManager implements CsrfTokenManager {
 

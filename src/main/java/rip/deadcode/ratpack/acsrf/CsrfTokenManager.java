@@ -5,6 +5,8 @@ import ratpack.handling.Context;
 
 /**
  * Creates and verifies the token.
+ *
+ * <p>
  * The way to generate the token, how to store tokens, how to verify tokens are implementation dependent.
  */
 public interface CsrfTokenManager {

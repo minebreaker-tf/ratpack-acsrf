@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<body ng-app="Application">
+
+<div ng-controller="AppController">
+    <h1>Tester</h1>
+
+    <button ng-click="sendGet()">GET</button>
+    <button ng-click="sendPost()">POST</button>
+    <button ng-click="sendPostWithoutToken()">POST without token</button>
+    <p>Result: {{ result }}</p>
+</div>
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
+<script>
+
+    const app = angular.module('Application', [])
+    app.controller("AppController", ["$scope", "$http", function AppController($scope, $http) {
+
+        $scope.sendGet = function () {
+            $scope.result = ""
+            $http.get("/").then(function (response) {
+                $scope.result = response.status + " " + response.statusText
+            }).catch(function (reason) {
+                $scope.result = reason
+            })
+        }
+
+        $scope.sendPost = function () {
+            $scope.result = ""
+            $http.post("/", "").then(function (response) {
+                $scope.result = response.status + " " + response.statusText
+            }).catch(function (reason) {
+                $scope.result = reason
+            })
+        }
+
+        $scope.sendPostWithoutToken = function () {
+            $scope.result = ""
+            $http.post("/", "", { xsrfCookieName: "XXX", xsrfHeaderName: "YYY" }).then(function (response) {
+                $scope.result = response.status + " " + response.statusText
+            }).catch(function (reason) {
+                $scope.result = reason
+            })
+        }
+    }])
+
+</script>
+
+</html>

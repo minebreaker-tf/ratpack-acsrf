@@ -5,12 +5,14 @@ import lombok.Data;
 /**
  * A module configuration bean.
  *
- * Default values are based on
+ * <p>
+ * Default values are based on <a href="https://angular.io/guide/http#security-xsrf-protection">Angular</a> settings.
+ *
+ * <p>
+ * Note that implementations are free not to use those values, while default ones respects them.
  */
 @Data
 public final class AntiCsrfConfig {
-
-    // https://docs.angularjs.org/api/ng/service/$http#cross-site-request-forgery-xsrf-protection
 
     /**
      * A cookie name of the anti-CSRF token, used to store the generated token.
@@ -18,7 +20,7 @@ public final class AntiCsrfConfig {
     private String tokenCookieName = "XSRF-TOKEN";
 
     /**
-     * Http header name, which the clients must set the token.
+     * Http header name, which the clients must set the token with it.
      */
     private String tokenHeaderName = "X-XSRF-TOKEN";
 

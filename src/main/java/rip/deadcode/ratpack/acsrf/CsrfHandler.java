@@ -4,6 +4,8 @@ import ratpack.handling.Handler;
 
 /**
  * Marker interface of anti-CSRF handler.
+ *
+ * <p>
  * Add this interface first of the handler chain.
  *
  * {@code
