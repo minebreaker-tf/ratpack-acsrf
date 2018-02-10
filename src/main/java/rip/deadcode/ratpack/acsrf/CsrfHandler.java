@@ -2,5 +2,15 @@ package rip.deadcode.ratpack.acsrf;
 
 import ratpack.handling.Handler;
 
-public interface CsrfHandler extends Handler {
-}
+/**
+ * Marker interface of anti-CSRF handler.
+ * Add this interface first of the handler chain.
+ *
+ * {@code
+ * .handlers(chain - > {
+ *     chain.all ( CsrfHandler.class)
+ *          .all( ctx -> ctx.render( "OK" ) );
+ * });
+ * }
+ */
+public interface CsrfHandler extends Handler {}

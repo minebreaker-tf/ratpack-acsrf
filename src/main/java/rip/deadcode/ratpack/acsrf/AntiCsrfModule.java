@@ -2,6 +2,10 @@ package rip.deadcode.ratpack.acsrf;
 
 import ratpack.guice.ConfigurableModule;
 
+/**
+ * Anti-CSRF Token module.
+ * Must include ratpack-session module before this one.
+ */
 public final class AntiCsrfModule extends ConfigurableModule<AntiCsrfConfig> {
 
     @Override

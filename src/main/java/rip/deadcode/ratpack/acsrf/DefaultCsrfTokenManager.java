@@ -13,6 +13,10 @@ import java.util.Optional;
 
 import static rip.deadcode.ratpack.acsrf.Utils.getCookieOf;
 
+/**
+ * A default {@link CsrfTokenManager} implementation.
+ * Generates a token based on session id.
+ */
 public final class DefaultCsrfTokenManager implements CsrfTokenManager {
 
     private final AntiCsrfConfig config;
