@@ -10,4 +10,9 @@ public final class AntiCsrfModule extends ConfigurableModule<AntiCsrfConfig> {
         bind( CsrfTokenManager.class ).to( DefaultCsrfTokenManager.class );
     }
 
+    public AntiCsrfModule withConfig( AntiCsrfConfig config ) {
+        setConfig( config );
+        return this;
+    }
+
 }

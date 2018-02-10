@@ -79,15 +79,10 @@ public class AntiCsrfModuleTest {
     @Test
     public void testConfigurable() throws Exception {
 
-        AntiCsrfModule antiCsrfModule = new AntiCsrfModule();
-        AntiCsrfConfig config = new AntiCsrfConfig();
-        config.setTokenCookieName( "XXX" );
-        antiCsrfModule.setConfig( config );
-
         server = RatpackServer.of( spec -> {
             spec.registry( Guice.registry( bindings -> {
                 bindings.module( SessionModule.class )
-                        .module( antiCsrfModule );
+                        .module( new AntiCsrfModule().withConfig( new AntiCsrfConfig().withTokenCookieName( "XXX" ) ) );
             } ) )
                 .handlers( chain -> {
                     chain.all( CsrfHandler.class )
