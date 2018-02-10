@@ -3,12 +3,15 @@ package rip.deadcode.ratpack.acsrf;
 import com.google.common.hash.HashFunction;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.netty.handler.codec.http.cookie.Cookie;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
 import ratpack.session.Session;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+
+import static rip.deadcode.ratpack.acsrf.AntiCsrfModule.HASH_FUNCTION_NAME;
 
 /**
  * A default {@link CsrfTokenManager} implementation.
@@ -23,7 +26,10 @@ public final class DefaultCsrfTokenManager implements CsrfTokenManager {
     private final HashFunction hashFunction;
 
     @Inject
-    public DefaultCsrfTokenManager( AntiCsrfConfig config, @Named( AntiCsrfModule.HASH_FUNCTION_NAME ) HashFunction hashFunction ) {
+    public DefaultCsrfTokenManager(
+            AntiCsrfConfig config,
+            @Named( HASH_FUNCTION_NAME ) HashFunction hashFunction ) {
+
         this.config = config;
         this.hashFunction = hashFunction;
     }
@@ -34,7 +40,10 @@ public final class DefaultCsrfTokenManager implements CsrfTokenManager {
         Session session = context.get( Session.class );
         String token = hash( session.getId() );
 
-        context.getResponse().cookie( config.getTokenCookieName(), token );
+        context.getResponse()
+               .cookie( config.getTokenCookieName(), token )
+               // Expires cookie immediately when the client finished
+               .setMaxAge( Cookie.UNDEFINED_MAX_AGE );
 
         return Promise.value( token );
     }

@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import ratpack.handling.Context;
 import ratpack.http.HttpMethod;
 
-import static rip.deadcode.ratpack.acsrf.Utils.*;
+import static rip.deadcode.ratpack.acsrf.Utils.getCookieOf;
 
 public final class DefaultCsrfHandler implements CsrfHandler {
 
