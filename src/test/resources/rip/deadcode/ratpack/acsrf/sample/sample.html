@@ -9,19 +9,23 @@
     <button ng-click="sendGet()">GET</button>
     <button ng-click="sendPost()">POST</button>
     <button ng-click="sendPostWithoutToken()">POST without token</button>
+    <br />
+    <button ng-click="clearCookies()">Clear cookies</button>
+
     <p>Result: {{ result }}</p>
 </div>
 
 </body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-cookies.js"></script>
 <script>
 
-    const app = angular.module('Application', [])
-    app.controller("AppController", ["$scope", "$http", function AppController($scope, $http) {
+    const app = angular.module("Application", ["ngCookies"])
+    app.controller("AppController", ["$scope", "$http", "$cookies", function AppController($scope, $http, $cookies) {
 
         $scope.sendGet = function () {
-            $scope.result = ""
+            $scope.result = "Sending..."
             $http.get("/").then(function (response) {
                 $scope.result = response.status + " " + response.statusText
             }).catch(function (reason) {
@@ -30,7 +34,7 @@
         }
 
         $scope.sendPost = function () {
-            $scope.result = ""
+            $scope.result = "Sending..."
             $http.post("/", "").then(function (response) {
                 $scope.result = response.status + " " + response.statusText
             }).catch(function (reason) {
@@ -39,12 +43,16 @@
         }
 
         $scope.sendPostWithoutToken = function () {
-            $scope.result = ""
+            $scope.result = "Sending..."
             $http.post("/", "", { xsrfCookieName: "XXX", xsrfHeaderName: "YYY" }).then(function (response) {
                 $scope.result = response.status + " " + response.statusText
             }).catch(function (reason) {
                 $scope.result = reason
             })
+        }
+
+        $scope.clearCookies = function () {
+            $cookies.remove("XSRF-TOKEN")
         }
     }])
 
