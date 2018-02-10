@@ -4,25 +4,34 @@ import com.google.inject.Inject;
 import ratpack.handling.Context;
 import ratpack.http.HttpMethod;
 
+import static rip.deadcode.ratpack.acsrf.Utils.*;
+
 public final class DefaultCsrfHandler implements CsrfHandler {
 
+    private AntiCsrfConfig config;
     private CsrfTokenManager tokenManager;
 
     @Inject
-    public DefaultCsrfHandler( CsrfTokenManager tokenManager ) {
+    public DefaultCsrfHandler( AntiCsrfConfig config, CsrfTokenManager tokenManager ) {
+        this.config = config;
         this.tokenManager = tokenManager;
     }
 
     @Override
-    public void handle( Context ctx ) throws Exception {
+    public void handle( Context ctx ) {
 
         HttpMethod m = ctx.getRequest().getMethod();
 
         if ( m.equals( HttpMethod.GET ) ) {
 
-            tokenManager.generate( ctx ).then( token -> {
+            if ( !getCookieOf( ctx, config.getTokenCookieName() ).isPresent() ) {
+                tokenManager.generate( ctx ).then( token -> {
+                    ctx.next();
+                } );
+            } else {
+                // Just passes to next handlers if the token is already set.
                 ctx.next();
-            } );
+            }
 
         } else {
 

@@ -11,6 +11,8 @@ import ratpack.session.Session;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import static rip.deadcode.ratpack.acsrf.Utils.getCookieOf;
+
 public final class DefaultCsrfTokenManager implements CsrfTokenManager {
 
     private final AntiCsrfConfig config;
@@ -37,19 +39,15 @@ public final class DefaultCsrfTokenManager implements CsrfTokenManager {
 
         Session session = context.get( Session.class );
 
-        Optional<Cookie> tokenInRequest = context.getRequest().getCookies().stream()
-                                                 .filter( c -> c.name().equals( config.getTokenCookieName() ) )
-                                                 .findAny();
+        Optional<Cookie> tokenInRequest = getCookieOf( context, config.getTokenCookieName() );
 
-        if ( tokenInRequest.isPresent() && tokenInRequest.get().value().equals( hash( session.getId() ) ) ) {
-            return Promise.value( Boolean.TRUE );
-        } else {
-            return Promise.value( Boolean.FALSE );
-        }
+        return Promise.value( tokenInRequest.isPresent() &&
+                              tokenInRequest.get().value().equals( hash( session.getId() ) ) );
     }
 
     private String hash( String sessionId ) {
         // By default, Ratpack session uses uuid-string as a session id.
+        // e.g.) c43667b7-5c6a-4c8d-b42e-799481e32362 => 32 x 2
         return hash.newHasher( 72 ).putString( sessionId, StandardCharsets.UTF_8 ).hash().toString();
     }
 
