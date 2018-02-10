@@ -3,7 +3,6 @@ package rip.deadcode.ratpack.acsrf;
 import org.junit.Before;
 import org.junit.Test;
 import ratpack.guice.Guice;
-import ratpack.http.HttpMethod;
 import ratpack.http.client.ReceivedResponse;
 import ratpack.server.RatpackServer;
 import ratpack.session.SessionModule;
@@ -39,7 +38,7 @@ public class AntiCsrfModuleTest {
             String cookie = response.getHeaders().get( "set-cookie" );
 
             assertThat( response.getStatusCode() ).isEqualTo( 200 );
-            assertThat( cookie ).matches( "X-XSRF-TOKEN=[a-z0-9]{64}" );
+            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9]{64}" );
             assertThat( response.getBody().getText() ).isEqualTo( "OK" );
         } );
     }
@@ -65,14 +64,14 @@ public class AntiCsrfModuleTest {
             assertThat( firstResponse.getBody().getText() ).isEqualTo( "OK" );
 
             ReceivedResponse secondResponse = httpClient.post();
-            assertThat( secondResponse.getStatusCode() ).isEqualTo( 200 );
-            assertThat( secondResponse.getBody().getText() ).isEqualTo( "OK" );
+            assertThat( secondResponse.getStatusCode() ).isEqualTo( 403 );
 
-
+            String token = firstResponse.getHeaders().get( "set-cookie" ).split( "=" )[1];
             ReceivedResponse thirdResponse = httpClient.request(
-                    request -> request.method( HttpMethod.POST )
-                                      .headers( headers -> headers.clear() ) );
-            assertThat( thirdResponse.getStatusCode() ).isEqualTo( 403 );
+                    request -> request.headers(
+                            header -> header.add( "X-XSRF-TOKEN", token ) ) );
+            assertThat( thirdResponse.getStatusCode() ).isEqualTo( 200 );
+            assertThat( thirdResponse.getBody().getText() ).isEqualTo( "OK" );
         } );
     }
 
@@ -82,7 +81,8 @@ public class AntiCsrfModuleTest {
         server = RatpackServer.of( spec -> {
             spec.registry( Guice.registry( bindings -> {
                 bindings.module( SessionModule.class )
-                        .module( new AntiCsrfModule().withConfig( new AntiCsrfConfig().withTokenCookieName( "XXX" ) ) );
+                        .module( new AntiCsrfModule().withConfig( new AntiCsrfConfig().withTokenCookieName( "XXX" )
+                                                                                      .withTokenHeaderName( "YYY" ) ) );
             } ) )
                 .handlers( chain -> {
                     chain.all( CsrfHandler.class )
@@ -96,18 +96,17 @@ public class AntiCsrfModuleTest {
             assertThat( firstResponse.getStatusCode() ).isEqualTo( 200 );
             assertThat( firstResponse.getBody().getText() ).isEqualTo( "OK" );
 
-            String tokenName = firstResponse.getHeaders().get( "set-cookie" ).split( "=" )[0];
-            assertThat( tokenName ).isEqualTo( "XXX" );
-
             ReceivedResponse secondResponse = httpClient.post();
-            assertThat( secondResponse.getStatusCode() ).isEqualTo( 200 );
-            assertThat( secondResponse.getBody().getText() ).isEqualTo( "OK" );
+            assertThat( secondResponse.getStatusCode() ).isEqualTo( 403 );
 
+            String[] token = firstResponse.getHeaders().get( "set-cookie" ).split( "=" );
+            assertThat( token[0] ).isEqualTo( "XXX" );
 
             ReceivedResponse thirdResponse = httpClient.request(
-                    request -> request.method( HttpMethod.POST )
-                                      .headers( headers -> headers.clear() ) );
-            assertThat( thirdResponse.getStatusCode() ).isEqualTo( 403 );
+                    request -> request.headers(
+                            header -> header.add( "YYY", token[1] ) ) );
+            assertThat( thirdResponse.getStatusCode() ).isEqualTo( 200 );
+            assertThat( thirdResponse.getBody().getText() ).isEqualTo( "OK" );
         } );
     }
 

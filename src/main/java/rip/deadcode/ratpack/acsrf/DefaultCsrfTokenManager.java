@@ -3,15 +3,12 @@ package rip.deadcode.ratpack.acsrf;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.inject.Inject;
-import io.netty.handler.codec.http.cookie.Cookie;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
 import ratpack.session.Session;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-
-import static rip.deadcode.ratpack.acsrf.Utils.getCookieOf;
+import java.util.Objects;
 
 /**
  * A default {@link CsrfTokenManager} implementation.
@@ -43,10 +40,9 @@ public final class DefaultCsrfTokenManager implements CsrfTokenManager {
 
         Session session = context.get( Session.class );
 
-        Optional<Cookie> tokenInRequest = getCookieOf( context, config.getTokenCookieName() );
+        String tokenInRequest = context.getRequest().getHeaders().get( config.getTokenHeaderName() );
 
-        return Promise.value( tokenInRequest.isPresent() &&
-                              tokenInRequest.get().value().equals( hash( session.getId() ) ) );
+        return Promise.value( Objects.equals( tokenInRequest, hash( session.getId() ) ) );
     }
 
     private String hash( String sessionId ) {
