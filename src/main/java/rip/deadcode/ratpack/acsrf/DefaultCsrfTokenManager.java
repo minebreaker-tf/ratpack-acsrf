@@ -1,8 +1,8 @@
 package rip.deadcode.ratpack.acsrf;
 
 import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
 import ratpack.session.Session;
@@ -14,16 +14,18 @@ import java.util.Objects;
  * A default {@link CsrfTokenManager} implementation.
  *
  * <p>
- * Generates a token which is a SHA-256 hash of the session id.
+ * Generates a token which is a hashFunction of the session id.
+ * You can DI {@link HashFunction} with name {@code AntiCsrfModule.HASH_FUNCTION_NAME}.
  */
 public final class DefaultCsrfTokenManager implements CsrfTokenManager {
 
     private final AntiCsrfConfig config;
-    private final HashFunction hash = Hashing.sha256();
+    private final HashFunction hashFunction;
 
     @Inject
-    public DefaultCsrfTokenManager( AntiCsrfConfig config ) {
+    public DefaultCsrfTokenManager( AntiCsrfConfig config, @Named( AntiCsrfModule.HASH_FUNCTION_NAME ) HashFunction hashFunction ) {
         this.config = config;
+        this.hashFunction = hashFunction;
     }
 
     @Override
@@ -50,7 +52,7 @@ public final class DefaultCsrfTokenManager implements CsrfTokenManager {
     private String hash( String sessionId ) {
         // By default, Ratpack session uses uuid-string as a session id.
         // e.g.) c43667b7-5c6a-4c8d-b42e-799481e32362 => 32 x 2
-        return hash.newHasher( 72 ).putString( sessionId, StandardCharsets.UTF_8 ).hash().toString();
+        return hashFunction.newHasher( 72 ).putString( sessionId, StandardCharsets.UTF_8 ).hash().toString();
     }
 
 }

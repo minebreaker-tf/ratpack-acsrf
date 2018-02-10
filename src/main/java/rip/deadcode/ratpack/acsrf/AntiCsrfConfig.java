@@ -9,7 +9,7 @@ import lombok.Data;
  * Default values are based on <a href="https://angular.io/guide/http#security-xsrf-protection">Angular</a> settings.
  *
  * <p>
- * Note that implementations are free not to use those values, while default ones respects them.
+ * Note that implementations are free not to use those values, while a default one respects them.
  */
 @Data
 public final class AntiCsrfConfig {
