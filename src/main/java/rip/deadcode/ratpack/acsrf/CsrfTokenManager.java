@@ -13,8 +13,12 @@ public interface CsrfTokenManager {
 
     /**
      * Generates and stores token based on the given context.
-     * This method does not have to be idempotent, i.e. may generate different values for each call with same Context.
-     * Usually, this method is called only the token has not been generated. If the token is already set,
+     * This method does not have to be idempotent,
+     * i.e. may generate different values for each call with the same Context.
+     * Usually, this method is called only the token has not been generated.
+     * If the token is already set, this method may not be called.
+     * This behavior assumes session id will not change, that is not true.
+     * Thus, user <b>MUST</b> call this method manually if the session id is renewed.
      *
      * @param context Context
      * @return Promise of the generated token.
