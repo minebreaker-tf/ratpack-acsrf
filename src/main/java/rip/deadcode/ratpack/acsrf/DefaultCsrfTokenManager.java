@@ -40,10 +40,10 @@ public final class DefaultCsrfTokenManager implements CsrfTokenManager {
         Session session = context.get( Session.class );
         String token = hash( session.getId() );
 
-        context.getResponse()
-               .cookie( config.getTokenCookieName(), token )
-               // Expires cookie immediately when the client finished
-               .setMaxAge( Cookie.UNDEFINED_MAX_AGE );
+        Cookie cookie = context.getResponse().cookie( config.getTokenCookieName(), token );
+        // Expires cookie immediately when the client finished
+        cookie.setMaxAge( Cookie.UNDEFINED_MAX_AGE );
+        cookie.setSecure( config.isSecure() );
 
         return Promise.value( token );
     }

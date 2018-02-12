@@ -28,10 +28,10 @@ public final class RandomCsrfTokenManager implements CsrfTokenManager {
         // UUID.randomUUID() guaranteed to generate cryptographically secure UUID.
         String token = UUID.randomUUID().toString();
 
-        context.getResponse()
-               .cookie( config.getTokenCookieName(), token )
-               // Expires cookie immediately when the client finished
-               .setMaxAge( Cookie.UNDEFINED_MAX_AGE );
+        Cookie cookie = context.getResponse().cookie( config.getTokenCookieName(), token );
+        // Expires cookie immediately when the client finished
+        cookie.setMaxAge( Cookie.UNDEFINED_MAX_AGE );
+        cookie.setSecure( config.isSecure() );
 
         return context.get( Session.class ).set( tokenKey, token ).map( () -> token );
     }

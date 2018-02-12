@@ -24,6 +24,11 @@ public final class AntiCsrfConfig {
      */
     private String tokenHeaderName = "X-XSRF-TOKEN";
 
+    /**
+     * Set secure attribute to the cookie.
+     */
+    private boolean secure = false;
+
     public AntiCsrfConfig withTokenCookieName( String tokenCookieName ) {
         this.tokenCookieName = tokenCookieName;
         return this;
@@ -31,6 +36,11 @@ public final class AntiCsrfConfig {
 
     public AntiCsrfConfig withTokenHeaderName( String tokenHeaderName ) {
         this.tokenHeaderName = tokenHeaderName;
+        return this;
+    }
+
+    public AntiCsrfConfig withSecure( boolean secure ) {
+        this.secure = secure;
         return this;
     }
 
