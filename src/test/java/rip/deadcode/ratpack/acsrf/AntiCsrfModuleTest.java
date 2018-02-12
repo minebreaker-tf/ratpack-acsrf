@@ -3,6 +3,7 @@ package rip.deadcode.ratpack.acsrf;
 import org.junit.Before;
 import org.junit.Test;
 import ratpack.guice.Guice;
+import ratpack.http.HttpMethod;
 import ratpack.http.client.ReceivedResponse;
 import ratpack.server.RatpackServer;
 import ratpack.session.SessionModule;
@@ -34,6 +35,40 @@ public class AntiCsrfModuleTest {
         EmbeddedApp.fromServer( server ).test( httpClient -> {
 
             ReceivedResponse response = httpClient.get();
+
+            String cookie = response.getHeaders().get( "set-cookie" );
+
+            assertThat( response.getStatusCode() ).isEqualTo( 200 );
+            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9]{64}" );
+            assertThat( response.getBody().getText() ).isEqualTo( "OK" );
+        } );
+    }
+
+    @Test
+    public void testWillNotGenerateNewTokenIfAlreadySet() throws Exception {
+
+        EmbeddedApp.fromServer( server ).test( httpClient -> {
+
+            ReceivedResponse response = httpClient.request(
+                    request -> request.method( HttpMethod.GET )
+                                      .headers( headers -> headers.set( "Cookie", "XSRF-TOKEN=abc" ) ) );
+
+            String cookie = response.getHeaders().get( "set-cookie" );
+
+            assertThat( response.getStatusCode() ).isEqualTo( 200 );
+            assertThat( cookie ).isNull();
+            assertThat( response.getBody().getText() ).isEqualTo( "OK" );
+        } );
+    }
+
+    @Test
+    public void testGenerateKeyIfTokenIsSetButEmpty() throws Exception {
+
+        EmbeddedApp.fromServer( server ).test( httpClient -> {
+
+            ReceivedResponse response = httpClient.request(
+                    request -> request.method( HttpMethod.GET )
+                                      .headers( headers -> headers.set( "Cookie", "XSRF-TOKEN=" ) ) );
 
             String cookie = response.getHeaders().get( "set-cookie" );
 

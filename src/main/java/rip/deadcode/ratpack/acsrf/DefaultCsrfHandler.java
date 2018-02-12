@@ -1,8 +1,12 @@
 package rip.deadcode.ratpack.acsrf;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import io.netty.handler.codec.http.cookie.Cookie;
 import ratpack.handling.Context;
 import ratpack.http.HttpMethod;
+
+import java.util.Optional;
 
 import static rip.deadcode.ratpack.acsrf.Utils.getCookieOf;
 
@@ -24,7 +28,8 @@ public final class DefaultCsrfHandler implements CsrfHandler {
 
         if ( m.equals( HttpMethod.GET ) ) {
 
-            if ( !getCookieOf( ctx, config.getTokenCookieName() ).isPresent() ) {
+            Optional<Cookie> cookie = getCookieOf( ctx, config.getTokenCookieName() );
+            if ( !cookie.isPresent() || Strings.isNullOrEmpty( cookie.get().value() ) ) {
                 tokenManager.generate( ctx ).then( token -> {
                     ctx.next();
                 } );
