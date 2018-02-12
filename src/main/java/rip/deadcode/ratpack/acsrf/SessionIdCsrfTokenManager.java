@@ -17,7 +17,7 @@ import static rip.deadcode.ratpack.acsrf.AntiCsrfModule.HASH_FUNCTION_NAME;
  * A default {@link CsrfTokenManager} implementation.
  *
  * <p>
- * Generates a token which is a hashFunction of the session id.
+ * Generates a token which is a hash of the session id.
  * You can DI {@link HashFunction} with name {@code AntiCsrfModule.HASH_FUNCTION_NAME}.
  */
 public final class SessionIdCsrfTokenManager implements CsrfTokenManager {
@@ -60,7 +60,7 @@ public final class SessionIdCsrfTokenManager implements CsrfTokenManager {
 
     private String hash( String sessionId ) {
         // By default, Ratpack session uses uuid-string as a session id.
-        // e.g.) c43667b7-5c6a-4c8d-b42e-799481e32362 => 32 x 2
+        // e.g.) c43667b7-5c6a-4c8d-b42e-799481e32362 => 36 x 2 = 72
         return hashFunction.newHasher( 72 ).putString( sessionId, StandardCharsets.UTF_8 ).hash().toString();
     }
 
