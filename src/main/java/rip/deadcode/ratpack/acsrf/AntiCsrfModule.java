@@ -22,7 +22,7 @@ public final class AntiCsrfModule extends ConfigurableModule<AntiCsrfConfig> {
         bind( HashFunction.class ).annotatedWith( Names.named( HASH_FUNCTION_NAME ) ).toInstance( Hashing.sha256() );
 
         bind( CsrfHandler.class ).to( DefaultCsrfHandler.class ).in( Singleton.class );
-        bind( CsrfTokenManager.class ).to( DefaultCsrfTokenManager.class ).in( Singleton.class );
+        bind( CsrfTokenManager.class ).to( SessionIdCsrfTokenManager.class ).in( Singleton.class );
     }
 
     public AntiCsrfModule withConfig( AntiCsrfConfig config ) {

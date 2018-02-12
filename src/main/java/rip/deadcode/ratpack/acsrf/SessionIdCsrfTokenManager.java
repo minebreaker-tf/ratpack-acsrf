@@ -20,13 +20,13 @@ import static rip.deadcode.ratpack.acsrf.AntiCsrfModule.HASH_FUNCTION_NAME;
  * Generates a token which is a hashFunction of the session id.
  * You can DI {@link HashFunction} with name {@code AntiCsrfModule.HASH_FUNCTION_NAME}.
  */
-public final class DefaultCsrfTokenManager implements CsrfTokenManager {
+public final class SessionIdCsrfTokenManager implements CsrfTokenManager {
 
     private final AntiCsrfConfig config;
     private final HashFunction hashFunction;
 
     @Inject
-    public DefaultCsrfTokenManager(
+    public SessionIdCsrfTokenManager(
             AntiCsrfConfig config,
             @Named( HASH_FUNCTION_NAME ) HashFunction hashFunction ) {
 
