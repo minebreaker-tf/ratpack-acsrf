@@ -8,7 +8,7 @@ buildscript {
 }
 
 group 'rip.deadcode'
-version '0.1.1'
+version '0.1.2'
 
 apply plugin: 'java'
 apply plugin: 'com.jfrog.bintray'
@@ -22,19 +22,19 @@ repositories {
 
 dependencies {
     compile(
-            'io.ratpack:ratpack-guice:1.5.1',
-            'io.ratpack:ratpack-session:1.5.1',
+            'io.ratpack:ratpack-guice:1.5.2',
+            'io.ratpack:ratpack-session:1.5.2',
 
-            'com.google.guava:guava:23.6-jre',
+            'com.google.guava:guava:24.0-jre',
             'com.google.code.findbugs:jsr305:3.0.2',
     )
     compileOnly 'org.projectlombok:lombok:1.16.20'
     testCompile(
-            'io.ratpack:ratpack-test:1.5.1',
+            'io.ratpack:ratpack-test:1.5.2',
 
             'junit:junit:4.12',
-            'com.google.truth:truth:0.36',
-            'org.mockito:mockito-core:2.8.47',
+            'com.google.truth:truth:0.39',
+            'org.mockito:mockito-core:2.15.0',
 //            'com.google.jimfs:jimfs:1.1'
 
             'org.slf4j:jul-to-slf4j:1.7.25', // Guava uses java.util.logging
