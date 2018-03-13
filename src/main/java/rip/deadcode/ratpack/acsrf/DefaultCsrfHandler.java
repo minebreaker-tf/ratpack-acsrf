@@ -26,7 +26,7 @@ public final class DefaultCsrfHandler implements CsrfHandler {
 
         HttpMethod m = ctx.getRequest().getMethod();
 
-        if ( m.equals( HttpMethod.GET ) ) {
+        if ( m.equals( HttpMethod.GET ) || m.equals( HttpMethod.OPTIONS ) ) {
 
             Optional<Cookie> cookie = getCookieOf( ctx, config.getTokenCookieName() );
             if ( !cookie.isPresent() || Strings.isNullOrEmpty( cookie.get().value() ) ) {

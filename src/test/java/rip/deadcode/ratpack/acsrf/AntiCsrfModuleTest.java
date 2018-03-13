@@ -45,6 +45,21 @@ public class AntiCsrfModuleTest {
     }
 
     @Test
+    public void testTokenIsSetWhenSendOptions() throws Exception {
+
+        EmbeddedApp.fromServer( server ).test( httpClient -> {
+
+            ReceivedResponse response = httpClient.options();
+
+            String cookie = response.getHeaders().get( "set-cookie" );
+
+            assertThat( response.getStatusCode() ).isEqualTo( 200 );
+            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9]{64}" );
+            assertThat( response.getBody().getText() ).isEqualTo( "OK" );
+        } );
+    }
+
+    @Test
     public void testWillNotGenerateNewTokenIfAlreadySet() throws Exception {
 
         EmbeddedApp.fromServer( server ).test( httpClient -> {

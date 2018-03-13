@@ -44,6 +44,18 @@ public final class CustomHeaderCsrfTokenManagerTest {
     }
 
     @Test
+    public void testOptions() throws Exception {
+
+        EmbeddedApp.fromServer( server ).test( httpClient -> {
+
+            ReceivedResponse response = httpClient.options();
+
+            assertThat( response.getStatusCode() ).isEqualTo( 200 );
+            assertThat( response.getBody().getText() ).isEqualTo( "OK" );
+        } );
+    }
+
+    @Test
     public void testPost() throws Exception {
 
         EmbeddedApp.fromServer( server ).test( httpClient -> {
