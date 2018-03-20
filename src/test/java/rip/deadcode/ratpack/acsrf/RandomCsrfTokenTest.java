@@ -1,7 +1,7 @@
 package rip.deadcode.ratpack.acsrf;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import ratpack.guice.Guice;
 import ratpack.http.client.ReceivedResponse;
 import ratpack.server.RatpackServer;
@@ -14,7 +14,7 @@ public class RandomCsrfTokenTest {
 
     private RatpackServer server;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         server = RatpackServer.of( spec -> {
             spec.registry( Guice.registry( bindings -> {

@@ -3,6 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
@@ -11,6 +12,7 @@ group 'rip.deadcode'
 version '0.1.3'
 
 apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'jacoco'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
@@ -33,10 +35,11 @@ dependencies {
     testCompile(
             'io.ratpack:ratpack-test:1.5.4',
 
-            'junit:junit:4.12',
+            'org.junit.jupiter:junit-jupiter-api:5.1.0',
             'com.google.truth:truth:0.39',
             'org.mockito:mockito-core:2.16.0',
     )
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -53,6 +56,23 @@ artifacts {
     archives jar
     archives sourcesJar
     archives javadocJar
+}
+
+jacoco {
+    applyTo junitPlatformTest
+}
+
+junitPlatformTest {
+    jacoco {
+        destinationFile = file("${buildDir}/jacoco/test.exec")
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
 }
 
 bintray {
