@@ -3,7 +3,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
@@ -12,7 +11,6 @@ group 'rip.deadcode'
 version '0.1.4'
 
 apply plugin: 'java'
-apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'jacoco'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
@@ -58,14 +56,8 @@ artifacts {
     archives javadocJar
 }
 
-jacoco {
-    applyTo junitPlatformTest
-}
-
-junitPlatformTest {
-    jacoco {
-        destinationFile = file("${buildDir}/jacoco/test.exec")
-    }
+test {
+    useJUnitPlatform()
 }
 
 jacocoTestReport {
