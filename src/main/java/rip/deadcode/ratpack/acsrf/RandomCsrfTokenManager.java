@@ -3,8 +3,11 @@ package rip.deadcode.ratpack.acsrf;
 import com.google.common.annotations.Beta;
 import com.google.inject.Inject;
 import io.netty.handler.codec.http.cookie.Cookie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
+import ratpack.server.ServerConfig;
 import ratpack.session.Session;
 import ratpack.session.SessionKey;
 
@@ -14,11 +17,16 @@ import java.util.UUID;
 @Beta
 public final class RandomCsrfTokenManager implements CsrfTokenManager {
 
+    private static final Logger logger = LoggerFactory.getLogger( RandomCsrfTokenManager.class );
+
     private static final SessionKey<String> tokenKey = SessionKey.of( UUID.randomUUID().toString(), String.class );
+
+    private final ServerConfig ratpackConfig;
     private final AntiCsrfConfig config;
 
     @Inject
-    public RandomCsrfTokenManager( AntiCsrfConfig config ) {
+    public RandomCsrfTokenManager( ServerConfig ratpackConfig, AntiCsrfConfig config ) {
+        this.ratpackConfig = ratpackConfig;
         this.config = config;
     }
 
@@ -42,8 +50,25 @@ public final class RandomCsrfTokenManager implements CsrfTokenManager {
         String tokenInRequest = context.getRequest().getHeaders().get( config.getTokenHeaderName() );
 
         return context.get( Session.class ).get( tokenKey )
-                      .map( storedToken -> storedToken.isPresent() &&
-                                           Objects.equals( storedToken.get(), tokenInRequest ) );
+                      .map( storedToken -> {
+                          if ( !storedToken.isPresent() ) {
+                              if (ratpackConfig.isDevelopment()) {
+                                  logger.warn( "Anti-CSRF token is not set." );
+                              }
+                              return false;
+                          }
+
+                          boolean result = Objects.equals( storedToken.get(), tokenInRequest );
+
+                          if ( !result && ratpackConfig.isDevelopment() ) {
+                              logger.warn(
+                                      "Anti-CSRF token does not match. Expected: {}; Actual: {}",
+                                      storedToken.get(),
+                                      tokenInRequest
+                              );
+                          }
+                          return result;
+                      } );
     }
 
 }

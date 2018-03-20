@@ -16,10 +16,11 @@ public final class Sample {
             spec.registry( Guice.registry( bindings -> {
                 bindings.module( SessionModule.class )
                         .module( AntiCsrfModule.class )
-                        .bind( CsrfTokenManager.class, RandomCsrfTokenManager.class )
-                ;
+                        .bind( CsrfTokenManager.class, RandomCsrfTokenManager.class );
             } ) )
-                .serverConfig( config -> config.findBaseDir( "rip/deadcode/ratpack/acsrf/sample/.ratpack" ) )
+                .serverConfig( config -> config
+                        .development( true )
+                        .findBaseDir( "rip/deadcode/ratpack/acsrf/sample/.ratpack" ) )
                 .handlers( chain -> {
                     chain.all( CsrfHandler.class )
                          .path( "sample.html", ctx -> ctx.render( ctx.file( "sample.html" ) ) )

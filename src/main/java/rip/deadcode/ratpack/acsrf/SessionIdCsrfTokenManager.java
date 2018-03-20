@@ -4,8 +4,11 @@ import com.google.common.hash.HashFunction;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.netty.handler.codec.http.cookie.Cookie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ratpack.exec.Promise;
 import ratpack.handling.Context;
+import ratpack.server.ServerConfig;
 import ratpack.session.Session;
 
 import java.nio.charset.StandardCharsets;
@@ -22,14 +25,19 @@ import static rip.deadcode.ratpack.acsrf.AntiCsrfModule.HASH_FUNCTION_NAME;
  */
 public final class SessionIdCsrfTokenManager implements CsrfTokenManager {
 
+    private static final Logger logger = LoggerFactory.getLogger( SessionIdCsrfTokenManager.class );
+
+    private final ServerConfig ratpackConfig;
     private final AntiCsrfConfig config;
     private final HashFunction hashFunction;
 
     @Inject
     public SessionIdCsrfTokenManager(
+            ServerConfig ratpackConfig,
             AntiCsrfConfig config,
             @Named( HASH_FUNCTION_NAME ) HashFunction hashFunction ) {
 
+        this.ratpackConfig = ratpackConfig;
         this.config = config;
         this.hashFunction = hashFunction;
     }
@@ -54,8 +62,14 @@ public final class SessionIdCsrfTokenManager implements CsrfTokenManager {
         Session session = context.get( Session.class );
 
         String tokenInRequest = context.getRequest().getHeaders().get( config.getTokenHeaderName() );
+        String expectedToken = hash( session.getId() );
+        boolean result = Objects.equals( tokenInRequest, expectedToken );
 
-        return Promise.value( Objects.equals( tokenInRequest, hash( session.getId() ) ) );
+        if ( !result && ratpackConfig.isDevelopment() ) {
+            logger.warn( "Anti-CSRF token error. Expected: {}; Actual: {}", expectedToken, tokenInRequest );
+        }
+
+        return Promise.value( result );
     }
 
     private String hash( String sessionId ) {
