@@ -40,6 +40,7 @@ public final class RandomCsrfTokenManager implements CsrfTokenManager {
         // Expires cookie immediately when the client finished
         cookie.setMaxAge( Cookie.UNDEFINED_MAX_AGE );
         cookie.setSecure( config.isSecure() );
+        cookie.setPath( "/" );
 
         return context.get( Session.class ).set( tokenKey, token ).map( () -> token );
     }
@@ -52,7 +53,7 @@ public final class RandomCsrfTokenManager implements CsrfTokenManager {
         return context.get( Session.class ).get( tokenKey )
                       .map( storedToken -> {
                           if ( !storedToken.isPresent() ) {
-                              if (ratpackConfig.isDevelopment()) {
+                              if ( ratpackConfig.isDevelopment() ) {
                                   logger.warn( "Anti-CSRF token is not set." );
                               }
                               return false;

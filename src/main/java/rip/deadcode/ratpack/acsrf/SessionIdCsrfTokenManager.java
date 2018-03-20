@@ -52,6 +52,7 @@ public final class SessionIdCsrfTokenManager implements CsrfTokenManager {
         // Expires cookie immediately when the client finished
         cookie.setMaxAge( Cookie.UNDEFINED_MAX_AGE );
         cookie.setSecure( config.isSecure() );
+        cookie.setPath( "/" );
 
         return Promise.value( token );
     }

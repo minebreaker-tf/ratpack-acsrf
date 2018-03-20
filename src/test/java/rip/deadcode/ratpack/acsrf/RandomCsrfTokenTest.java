@@ -43,7 +43,7 @@ public class RandomCsrfTokenTest {
             String cookie = response.getHeaders().get( "set-cookie" );
 
             assertThat( response.getStatusCode() ).isEqualTo( 200 );
-            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9\\-]{36}" );
+            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9\\-]{36}; Path=/" );
             assertThat( response.getBody().getText() ).isEqualTo( "OK" );
         } );
     }
@@ -58,7 +58,7 @@ public class RandomCsrfTokenTest {
             String cookie = response.getHeaders().get( "set-cookie" );
 
             assertThat( response.getStatusCode() ).isEqualTo( 200 );
-            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9\\-]{36}" );
+            assertThat( cookie ).matches( "XSRF-TOKEN=[a-z0-9\\-]{36}; Path=/" );
             assertThat( response.getBody().getText() ).isEqualTo( "OK" );
         } );
     }
