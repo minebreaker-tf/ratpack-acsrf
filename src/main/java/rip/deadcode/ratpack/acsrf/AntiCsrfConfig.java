@@ -1,7 +1,5 @@
 package rip.deadcode.ratpack.acsrf;
 
-import lombok.Data;
-
 /**
  * A module configuration bean.
  *
@@ -11,7 +9,6 @@ import lombok.Data;
  * <p>
  * Note that implementations are free not to use those values, while a default one respects them.
  */
-@Data
 public final class AntiCsrfConfig {
 
     /**
@@ -29,9 +26,25 @@ public final class AntiCsrfConfig {
      */
     private boolean secure = false;
 
+    public String getTokenCookieName() {
+        return tokenCookieName;
+    }
+
+    public void setTokenCookieName( String tokenCookieName ) {
+        this.tokenCookieName = tokenCookieName;
+    }
+
     public AntiCsrfConfig withTokenCookieName( String tokenCookieName ) {
         this.tokenCookieName = tokenCookieName;
         return this;
+    }
+
+    public String getTokenHeaderName() {
+        return tokenHeaderName;
+    }
+
+    public void setTokenHeaderName( String tokenHeaderName ) {
+        this.tokenHeaderName = tokenHeaderName;
     }
 
     public AntiCsrfConfig withTokenHeaderName( String tokenHeaderName ) {
@@ -39,9 +52,16 @@ public final class AntiCsrfConfig {
         return this;
     }
 
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure( boolean secure ) {
+        this.secure = secure;
+    }
+
     public AntiCsrfConfig withSecure( boolean secure ) {
         this.secure = secure;
         return this;
     }
-
 }
