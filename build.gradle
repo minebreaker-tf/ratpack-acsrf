@@ -76,7 +76,7 @@ bintray {
         repo = 'test'
         name = 'ratpack-acsrf'
         licenses = ['MIT']
-        vcsUrl = 'https://bitbucket.org/minebreaker_tf/ratpack-acsrf.git'
+        vcsUrl = 'https://github.com/minebreaker-tf/ratpack-acsrf.git'
     }
     publications = ['bintrayPublication']
 }
